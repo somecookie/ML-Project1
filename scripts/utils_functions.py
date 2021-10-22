@@ -23,6 +23,18 @@ def compute_loss_mae(y, tx, w):
     mae = (1/len(y)) * np.sum(np.absolute(e))
     return mae
 
+#Computes the sigmoid function
+def sigmoid(t):
+    return np.exp(t)/(1+np.exp(t))
+
+#Computes the negative log likelyhood
+def calculate_logloss(y, tx, w):
+    loss = 0
+    for i in range(len(y)):
+        loss = loss + np.log(1+np.exp(tx[i].T@w))-y[i]*tx[i].T@w
+    return loss
+
+
 # Mandatory functions--------------------------------------------------------------------------------------------
 
 # Linear regression using gradient descent
@@ -31,7 +43,6 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
         gradL = compute_gradient(y, tx, w)
         loss = compute_loss_mse(y, tx, w)
-        # gamma = np.linalg.norm(gradL)*0.1
         w = w - gamma * gradL
     return w, loss
 
@@ -58,6 +69,21 @@ def ridge_regression(y, tx, lambda_):
     loss = compute_loss_mse(y, tx, w)
     return w, loss
 
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
+    w = initial_w
+    for iter in range(max_iters):
+        gradL = tx.T@(sigmoid(tx@w)-y)
+        w = w - gamma * gradL
+        loss = calculate_logloss(y, tx, w)
+    return w, loss
+
+def learning_by_gradient_descent(y, tx, w, gamma):
+    loss = calculate_loss(y, tx, w)
+    gradL = calculate_gradient(y, tx, w)
+    w = w-gamma*gradL
+    return loss, w
+
+# Other useful functions--------------------------------------------------------------------------------------------
 
 def split_data(x, y, ratio, seed=1):
     """
