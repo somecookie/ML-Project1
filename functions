@@ -1,0 +1,118 @@
+import numpy as np
+
+def build_model_data(isHiggs, signature):
+    y = isHiggs
+    x = signature
+    num_samples = len(y)
+    tx = np.c_[np.ones(num_samples), x]
+    print('data built')
+    return y, tx
+
+def compute_loss(y, tx, w):
+    e = y - tx @ w
+    mse = len(y)**(-1) * e.T @ e
+    return mse
+
+def compute_loss2(y, tx, w):
+    e = y - tx @ w
+    mae = len(y)**(-1) * np.sum(np.absolute(e))
+    return mae
+
+def compute_gradient(y, tx, w):
+    """Compute the gradient."""
+    e = y-tx@w
+    grad = -len(y)**(-1)*tx.T@e
+    return grad
+
+def gradient_descent(y, tx, initial_w, max_iters, gamma):
+    """Gradient descent algorithm."""
+    # Define parameters to store w and loss
+    ws = [initial_w]
+    losses = []
+    w = initial_w
+    for n_iter in range(max_iters):
+        gradL = compute_gradient(y, tx, w.T)
+        loss = compute_loss(y, tx, w)
+        w = w - gamma*gradL
+        ws.append(w)
+        losses.append(loss)
+        print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}, grad={grad}".format(
+              bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1], grad=gradL))
+    return losses, ws
+
+def compute_stoch_gradient(y, tx, w):
+    """Compute a stochastic gradient from just few examples n and their corresponding y_n labels."""
+    e = y-tx@w
+    grad = -len(y)**(-1)*tx.T@e
+    return grad
+
+def stochastic_gradient_descent(
+        y, tx, initial_w, batch_size, max_iters, gamma):
+    """Stochastic gradient descent algorithm."""
+    ws = [initial_w]
+    losses = []
+    w = initial_w
+    for n_iter in range(max_iters):
+        for minibatch_y, minibatch_tx in batch_iter(y, tx, batch_size):
+            gradL = compute_gradient(minibatch_y, minibatch_tx, w.T)
+            loss = compute_loss(minibatch_y, minibatch_tx, w)
+            w = w - gamma*gradL
+            ws.append(w)
+            losses.append(loss)
+        print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}, grad={grad}".format(
+              bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1], grad=gradL))
+    return losses, ws
+
+def compute_gradient2(y, tx, w):
+    e = y-tx@w
+    grad = -len(y)**(-1)*tx.T@np.sign(e)
+    return grad
+
+def compute_tukeygrad(y, tx, w, delta):
+    e = y - tx @ w
+    isbigger = (np.abs(e) <= (np.ones(len(y))*delta))
+    dlde = isbigger * (e*(np.ones(len(y)) - (delta**(-2))*(e**2))**2)
+    dedw = -tx
+    tgrad = (dlde.T@dedw).T
+    print(dlde)
+    return tgrad
+
+def compute_tukeyloss(y, tx, w, delta):
+    e = y - tx @ w
+    isbigger = (np.abs(e) <= (np.ones(len(y))*delta))
+    isnotbigger = not isbigger
+    tloss = isbigger*(1/6)*(delta**2)*(np.ones(len(y))-(e/delta)**2)**3 + isnotbigger*isbigger*(1/6)*np.ones(len(y))
+    return tloss
+
+def gradient_descent2(y, tx, initial_w, max_iters, gamma):
+    """Gradient descent algorithm."""
+    w = initial_w
+    loss = compute_loss2(y, tx, w)
+    for n_iter in range(max_iters):
+        print('loss at step '+str(n_iter)+': '+str(loss))
+        gradL = compute_gradient2(y, tx, w.T)
+        loss = compute_loss2(y, tx, w)
+        w = w - gamma*gradL
+    return loss, w
+
+def gradient_descent_tukey(y, tx, initial_w, max_iters, gamma, delta):
+    """Gradient descent algorithm with tukey method."""
+    w = initial_w
+    for n_iter in range(max_iters):
+        gradL = compute_tukeygrad(y, tx, w.T, delta)
+        loss = compute_loss2(y, tx, w)
+        print(loss)
+        w = w - gamma*gradL
+    return loss, w
+
+def gradient_descent_tukeyloss(y, tx, initial_w, max_iters, gamma, delta):
+    """Gradient descent algorithm with tukey loss function."""
+    w = initial_w
+    for n_iter in range(max_iters):
+        gradL = compute_tukeygrad(y, tx, w.T, delta)
+        loss = compute_loss2(y, tx, w)
+        print(loss)
+        w = w - gamma*gradL
+    return loss, w
+
+
