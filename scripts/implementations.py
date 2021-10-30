@@ -1,7 +1,8 @@
 import numpy as np
 import threading
+import random
 
-############### utils function
+############### utils function ###############
 
 def process_data(x):
     """
@@ -311,3 +312,85 @@ class RidgeRegressionModel:
         self.rmse_te = rmse_te
         self.accuracy = accuracy
         self.rmse_tr = rmse_tr
+
+############### mandatory function ###############
+
+# Linear regression using gradient descent
+def least_squares_GD(y, tx, initial_w, max_iters, gamma):
+    """"
+    least_squares_GD implements linear regression using gradient descent.
+    """
+    w = initial_w
+    for _ in range(max_iters):
+        gradL = compute_gradient(y, tx, w)
+        loss = compute_mse(y, tx, w)
+        w = w - gamma * gradL
+    return w, loss
+
+def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
+    """"
+    least_squares_SGD implements linear regression using stochastic gradient descent.
+    """
+    w = initial_w
+    for _ in range(max_iters):
+        sample_idx = random.randint(0, len(y))
+        gradL = compute_gradient(y[sample_idx], tx[sample_idx], w)
+        loss = compute_mse(y[sample_idx], tx[sample_idx], w)
+        w = w - gamma * gradL
+    return w, loss
+
+
+def least_squares(y, tx):
+    """"
+    least_squares implements least squares regression using normal equations
+    """
+    w = np.linalg.solve(tx.T @ tx, tx.T @ y)
+    loss = compute_mse(y, tx, w)
+    return w, loss
+
+def compute_gradient(y, tx, w):
+    """
+    compute_gradient computes the gradient of a linear model for least squares.
+    """
+    e = y - tx @ w.T
+    grad = -(1/len(y))* tx.T @ e
+    return grad
+
+def sigmoid(t):
+    """
+    sigmoid computes the sigmoid function
+    """
+    return np.exp(t)/(1+np.exp(t))
+
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
+    """
+    Logistic regression using gradient descent
+    """
+    w = initial_w
+    for _ in range(max_iters):
+        loss = calculate_loss(y, tx, w)
+        grad = calculate_gradient(y, tx, w)
+        w -= gamma*grad
+    return w, loss
+
+def calculate_loss(y, tx, w):
+    """compute the loss: negative log likelihood."""
+    sig = sigmoid(tx@w)
+    loss = y.T@np.log(sig) + (1-y.T)@np.log(1-sig)
+    return -loss[0,0]
+
+def calculate_gradient(y, tx, w):
+    """compute the gradient of loss for logistic regression."""
+    return tx.T@(sigmoid(tx@w)-y)
+
+def reg_logistic_regression(y, tx, lambda_,initial_w, max_iters, gamma):
+    """
+    Regularized  logistic  regression  using  gradient  descent
+    """
+    w = initial_w
+
+    for _ in range(max_iters):
+        loss = calculate_loss(y, tx, w) + 0.5*lambda_*w.T@w
+        grad = calculate_gradient(y, tx, w) + lambda_*w
+        w -= gamma*grad
+    return w, loss
