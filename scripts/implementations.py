@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib as plt
 import threading
 
 ############### utils function
@@ -41,37 +40,6 @@ def process_data(x):
         xs.append(x_temp)
 
     return xs, idx_split
-
-    
-
-
-
-def split_data_jet_num(x, y):
-    """
-    split_data_jet_num splits the data in 3 according to the jet number value (0, 1 and 2-3).
-    
-    Parameters:
-
-        x (numpy.array)     : NxD matrix containing the dataset
-        headers (list(str)) : list of length D containing the names of the features
-    
-    Returns:
-        x0, x1, x23 (tuple((numpy.array))): 3 datasets that for which the value PRI_jet_num is 0, 1 or 2-3
-    """
-
-    jet_num_idx = 22
-    x0 = x[x[:, jet_num_idx] == 0, :]
-    y0 = y[x[:, jet_num_idx] == 0]
-    x1 = x[x[:, jet_num_idx] == 1, :]
-    y1 = y[x[:, jet_num_idx] == 1]
-    x2 = x[x[:, jet_num_idx] == 2, :]
-    y2 = y[x[:, jet_num_idx] == 2]
-    x3 = x[x[:, jet_num_idx] == 3, :]
-    y3 = y[x[:, jet_num_idx] == 3]
-    x23 = np.concatenate((x2,x3))
-    y23 = np.concatenate((y2,y3))
-
-    return [x0, x1, x23],[y0, y1, y23]
 
 def set_undefined_to_median(x):
     """
