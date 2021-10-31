@@ -10,7 +10,7 @@ if __name__ == "__main__":
     ys_tr = y[ids_training[0]], y[ids_training[1]], y[ids_training[2]]
 
     # best model parameter found with CV
-    model_params = [(12, 0.00010974987654930568), (12,0.002595024211399737), (12, 0.001023531021899027)]
+    model_params = [(12, 0.00023299518105153718), (11, 0.0000010000), (13, 0.00013257113655901082)]
 
     # create new model and compute the weights according to the best params and the training data
     predModel = ThreeModels(xs_tr, ys_tr)
