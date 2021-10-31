@@ -96,6 +96,9 @@ def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
     N = x.shape[0]
     poly = np.ones((N,1))
+    poly = np.c_[poly, np.sin(x)]
+    poly = np.c_[poly, np.cos(x)]
+    
     assert degree > 0
     
     if degree == 1:
