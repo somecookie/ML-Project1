@@ -8,7 +8,7 @@ class on a real-world dataset: data from CERN about the Higgs boson.
 
 ## Report
 
-To solve the classification challenge based on a CERN Higgs Boson dataset we were presented, we use data preprocessing (normalization, categorization, replacing missing values), and try basic methods (linear, Ridge and logistic regression). We split the data in 3 subsets based on the value of ’PRI jet num’, and we manage to obtain an accuracy of 0.830 and F1 score of 0.741 on the test dataset using a Ridge regression model with trigonometric and polynomial extension of degrees 12, 11 and 13, lambdas equal to 0.00023, 0.000001, and 0.0001 respectively for the 3 data categories.
+To solve the classification challenge based on a CERN Higgs Boson dataset we were presented, we use data preprocessing (normalization, categorization, replacing missing values), and try basic methods (linear, Ridge and logistic regression). We split the data in 3 subsets based on the value of `PRI jet num`, and we manage to obtain an accuracy of 0.830 and F1 score of 0.741 on the test dataset using a Ridge regression model with trigonometric and polynomial extension of degrees 12, 11 and 13, lambdas equal to 0.00023, 0.000001, and 0.0001 respectively for the 3 data categories.
 
 If you want to learn more about our results, you will find more details in the [report](report.pdf).
 
