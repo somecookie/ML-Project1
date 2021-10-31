@@ -3,7 +3,7 @@ from implementations import *
 
 if __name__ == "__main__":
     #load training data
-    y, tX, ids = load_csv_data('train.csv')
+    y, tX, ids = load_csv_data('data/train.csv')
 
     # pre process training data
     xs_tr, ids_training = process_data(tX)
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     predModel.compute_ws()
     
     # load test data
-    _, tX_test, ids_test = load_csv_data('test.csv')
+    _, tX_test, ids_test = load_csv_data('data/test.csv')
 
     # process test data
     xs_test, indexes_per_cat = process_data(tX_test)
